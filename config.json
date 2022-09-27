@@ -1,0 +1,19 @@
+{
+  "contactOwner": "6282119680187",
+  "ownerNumber": ["6282119680187@s.whatsapp.net"],
+  "botName": "GHOTIC BOT",
+  "ownerName": "ANAM.ID",
+  "pathimg": "./temp/logo.jpeg",
+  "footer": "ANAM BOT V15.4",
+  "apikey": "c34aebf5f6314445fae014b8bcc3cec9f8327d96d5b429f0e0570d152c4207bf",
+  "payment": {
+    "gopay": {
+      "nomer": "no found",
+      "atas_nama": "no found"
+    },
+    "dana": {
+      "nomer": "_",
+      "atas_nama": "_"
+    }
+  }
+}
