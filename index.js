@@ -49,7 +49,7 @@ const { addResponList, delResponList, isAlreadyResponList, isAlreadyResponListGr
 const Exif = require("./lib/exif")
 const exif = new Exif()
 moment.tz.setDefault("Asia/Jakarta").locale("id");
-module.exports = async(conn, msg, m, setting, store, welcome, _afk, left) => {
+module.exports = async(dica, msg, m, setting, store, welcome, _afk, left) => {
 try {
 let { ownerNumber, botName, ownerName } = setting
 let { allmenu } = require('./help')
@@ -67,7 +67,7 @@ const toJSON = j => JSON.stringify(j, null,'\t')
 const prefix = /^[°•π÷×¶∆£¢€¥®™✓_=|~!?#$%^&.+-,\/\\©^]/.test(chats) ? chats.match(/^[°•π÷×¶∆£¢€¥®™✓_=|~!?#$%^&.+-,\/\\©^]/gi) : '#'
 const isGroup = msg.key.remoteJid.endsWith('@g.us')
 const sender = isGroup ? (msg.key.participant ? msg.key.participant : msg.participant) : msg.key.remoteJid
-const isOwner = ownerNumber == sender ? true : ["6285789004732@s.whatsapp.net","6283834558105@s.whatsapp.net"].includes(sender) ? true : false
+const isOwner = ownerNumber == sender ? true : ["6281238996370@s.whatsapp.net"].includes(sender) ? true : false
 const pushname = msg.pushName
 const body = chats.startsWith(prefix) ? chats : ''
 const budy = (type === 'conversation') ? msg.message.conversation : (type === 'extendedTextMessage') ? msg.message.extendedTextMessage.text : ''
@@ -79,8 +79,8 @@ const isCmd = isCommand ? body.slice(1).trim().split(/ +/).shift().toLowerCase()
 var dataGroup = (type === 'buttonsResponseMessage') ? msg.message.buttonsResponseMessage.selectedButtonId : ''
 var dataPrivate = (type === "messageContextInfo") ? (msg.message.buttonsResponseMessage?.selectedButtonId || msg.message.listResponseMessage?.singleSelectReply.selectedRowId) : ''
 const isButton = dataGroup.length !== 0 ? dataGroup : dataPrivate
-const botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net'
-const groupMetadata = isGroup ? await conn.groupMetadata(from) : ''
+const botNumber = dica.user.id.split(':')[0] + '@s.whatsapp.net'
+const groupMetadata = isGroup ? await dica.groupMetadata(from) : ''
 const groupName = isGroup ? groupMetadata.subject : ''
 const groupId = isGroup ? groupMetadata.id : ''
 const groupMembers = isGroup ? groupMetadata.participants : ''
@@ -90,7 +90,7 @@ const isGroupAdmins = groupAdmins.includes(sender)
 const participants = isGroup ? await groupMetadata.participants : ''
 const isUser = pendaftar.includes(sender)
 const isAntiLink = antilink.includes(from) ? true : false
-const isDeveloper = ["6283834558105@s.whatsapp.net"].includes(sender) ? true : false
+const itsMeDica = ["6281238996370@s.whatsapp.net"].includes(sender) ? true : false
 const isAfkOn = checkAfkUser(sender, _afk)
 const isWelcome = isGroup ? welcome.includes(from) ? true : false : false
 const isLeft = left.includes(from) ? true : false
@@ -103,16 +103,16 @@ const isUrl = (url) => {return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z
 function jsonformat(string) {return JSON.stringify(string, null, 2)}
 function mentions(teks, mems = [], id) {
 if (id == null || id == undefined || id == false) {
-let res = conn.sendMessage(from, { text: teks, mentions: mems })
-return res } else { let res = conn.sendMessage(from, { text: teks, mentions: mems }, { quoted: msg })
+let res = dica.sendMessage(from, { text: teks, mentions: mems })
+return res } else { let res = dica.sendMessage(from, { text: teks, mentions: mems }, { quoted: msg })
 return res}}
 
 const pickRandom = (arr) => {
 return arr[Math.floor(Math.random() * arr.length)]
 }
-const reply = (teks) => {conn.sendMessage(from, { text: teks }, { quoted: msg })}
-const textImg = (teks) => {return conn.sendMessage(from, { text: teks, jpegThumbnail: fs.readFileSync(setting.pathimg) }, { quoted: msg })}
-const sendMess = (hehe, teks) => {conn.sendMessage(hehe, { text, teks })}
+const reply = (teks) => {dica.sendMessage(from, { text: teks }, { quoted: msg })}
+const textImg = (teks) => {return dica.sendMessage(from, { text: teks, jpegThumbnail: fs.readFileSync(setting.pathimg) }, { quoted: msg })}
+const sendMess = (hehe, teks) => {dica.sendMessage(hehe, { text, teks })}
 const fkontak = { key: {fromMe: false,participant: `0@s.whatsapp.net`, ...(from ? { remoteJid: "status@broadcast" } : {}) }, message: { 'contactMessage': { 'displayName': `${jam} WIB`, 'vcard': `BEGIN:VCARD\nVERSION:3.0\nN:XL;BOT-LEXXY,;;;\nFN:${pushname},\nitem1.TEL;waid=${sender.split('@')[0]}:${sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`, 'jpegThumbnail': fs.readFileSync(setting.pathimg)}}}
 function parseMention(text = '') {
 return [...text.matchAll(/@([0-9]{5,16}|0)/g)].map(v => v[1] + '@s.whatsapp.net')
@@ -125,7 +125,7 @@ const vcard = 'BEGIN:VCARD\n'
 + 'ORG:;\n'
 + 'TEL;type=CELL;type=VOICE;waid=' + number + ':+' + number + '\n'
 + 'END:VCARD'
-return conn.sendMessage(from, { contacts: { displayName: name, contacts: [{ vcard }] }, mentions : mn ? mn : []},{ quoted: quoted })
+return dica.sendMessage(from, { contacts: { displayName: name, contacts: [{ vcard }] }, mentions : mn ? mn : []},{ quoted: quoted })
 }
 
 const doc = { 
@@ -163,7 +163,7 @@ buttons,
 headerType: 2,
 ...options
 }
-conn.sendMessage(jid, buttonMessage, { quoted, ...options })
+dica.sendMessage(jid, buttonMessage, { quoted, ...options })
 }
 
 const mentionByTag = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.mentionedJid : []
@@ -224,7 +224,7 @@ if (!isBotGroupAdmins) return reply('Untung bot bukan admin')
 if (isOwner) return reply('Untung lu owner ku:v')
 if (isGroupAdmins) return reply('Admin grup mah bebas ygy')
 reply(`*「 GROUP LINK DETECTOR 」*\n\nSepertinya kamu mengirimkan link grup, maaf kamu akan di kick`)
-conn.groupParticipantsUpdate(from, [sender], "remove")
+dica.groupParticipantsUpdate(from, [sender], "remove")
 }
 }
 
@@ -233,11 +233,11 @@ conn.groupParticipantsUpdate(from, [sender], "remove")
 if (!isCmd && isGroup && isAlreadyResponList(from, chats, db_respon_list)) {
 var get_data_respon = getDataResponList(from, chats, db_respon_list)
 if (get_data_respon.isImage === false) {
-conn.sendMessage(from, { text: sendResponList(from, chats, db_respon_list) }, {
+dica.sendMessage(from, { text: sendResponList(from, chats, db_respon_list) }, {
 quoted: msg
 })
 } else {
-conn.sendMessage(from, { image: await getBuffer(get_data_respon.image_url), caption: get_data_respon.response }, {
+dica.sendMessage(from, { image: await getBuffer(get_data_respon.image_url), caption: get_data_respon.response }, {
 quoted: msg
 })
 }
@@ -290,31 +290,31 @@ const pasangan = teman[Math.floor(Math.random() * (teman.length))]
 
 //Auto Block Nomor Luar Negeri
 if (sender.startsWith('212')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('91')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('92')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('90')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('54')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('55')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('40')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('94')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
 if (sender.startsWith('60')) {
-return conn.updateBlockStatus(sender, 'block')
+return dica.updateBlockStatus(sender, 'block')
 }
                 // Response Deposit Button
                 if (isButton === "payment_gopay") {
@@ -411,12 +411,12 @@ _Silahkan transfer dengan no yang sudah tertera, Jika sudah harap kirim bukti po
 *Tanggal:* ${data_deposit.date.split(' ')[0]}
 *Jumlah Depo:* Rp ${toRupiah(data_deposit.data.amount_deposit)}`
                  reply(text_sukses)
-                 conn.sendMessage(data_deposit.number, { text: `${text_sukses}\n\n_Depositmu telah dikonfirmasi oleh admin, silahkan cek saldo dengan cara *#me*_`})
+                 dica.sendMessage(data_deposit.number, { text: `${text_sukses}\n\n_Depositmu telah dikonfirmasi oleh admin, silahkan cek saldo dengan cara *#me*_`})
                  fs.unlinkSync(depositPath + data_deposit.number.split('@')[0] + ".json")
                } else if (isButton === "reject_deposit") {
                  let data_deposit = JSON.parse(fs.readFileSync(depositPath + msg.message.buttonsResponseMessage.contextInfo.quotedMessage.buttonsMessage.imageMessage.caption.split('wa.me/')[1].split('*Payment:*')[0].trim() + '.json'))
                  reply(`Sukses Reject Deposit dengan ID : ${data_deposit.ID}`)
-                 conn.sendMessage(data_deposit.number, { text: `Maaf Deposit Dengan ID : ${data_deposit.ID} DiReject, Silahkan hubungin Owner\n\nwa.me/${ownerNumber.split('@')[0]}`})
+                 dica.sendMessage(data_deposit.number, { text: `Maaf Deposit Dengan ID : ${data_deposit.ID} DiReject, Silahkan hubungin Owner\n\nwa.me/${ownerNumber.split('@')[0]}`})
                  fs.unlinkSync(depositPath + data_deposit.number.split('@')[0] + ".json")
                }
 
@@ -447,7 +447,7 @@ fs.writeFileSync('./database/dashboard/userhit.json', JSON.stringify(hitbot))
 }
 
 // Sewa
-_sewa.expiredCheck(conn, sewa)
+_sewa.expiredCheck(dica, sewa)
 
 // Console Logs
 if (isCmd && !fromMe) {console.log("[" + chalk.green(" CMD ") + "]" + chalk.yellow("=") + "[ " + chalk.green(`${pushname}`) + " ]" + chalk.yellow("=") + "[ " + chalk.green(`${prefix+command}`) + " ]" + chalk.yellow("=") + "[ " + chalk.green(`${jam}`) + " ]"  )}
@@ -467,15 +467,6 @@ let teks_menu =`
 │• Tag : @${sender.split("@")[0]}
 
 ${allmenu(prefix)}
-
-[ *THANKS TO* ]
-➾ ≻ _@Adiwajshing_
-➾ ≻ _Caliph-Api_
-➾ ≻ _Hikki-Me_
-➾ ≻ _Yogi-Pw_
-➾ ≻ _Botcahx-Api_
-➾ ≻ _ZassXd Official_
-➾ ≻ _Subcriber Lexxy_
 
 
 _*Runtime Bot :*_
@@ -499,14 +490,14 @@ footer: setting.footer,
 buttons: button_menu,
 headerType: 4
 }
-const sendMsg = await conn.sendMessage(from, ini_message_Menu, { quoted: fkontak })
+const sendMsg = await dica.sendMessage(from, ini_message_Menu, { quoted: fkontak })
 }
 break
 case 'listgc': {
 let anu = await store.chats.all().filter(v => v.id.endsWith('@g.us')).map(v => v.id)
 let teks = `     「 List Group Chat 」\n\nTotal List Group Bot : ${anu.length}`
 for (let i of anu) {
- let metadata = await conn.groupMetadata(i)
+ let metadata = await dica.groupMetadata(i)
  if (metadata.owner === "undefined") {
 var loldd = false
  } else {
@@ -526,12 +517,7 @@ for (let i of anu) {
 reply(teks)
 }
 break
-case 'source_code':let text_source =`━━━[ *SOURCE-CODE* ]━━━
-• _Whatsapp : 0838-3455-8105_
-• _Youtube : ZassXd Official_
-━━━━━━━━━━━━━━━━━━━`
-reply(text_source)
-break
+
 case 'hit_global':{
 var res = await fetchJson(`https://api.countapi.xyz/hit/Lexxy/visits`)
 reply(`*HIT GLOBAL ${res.value}*`)
@@ -590,7 +576,7 @@ following : ${z.following}
 connect_fb : ${z.conneted_fb}
 timeline : ${z.timeline}
 bio : ${z.bio}`
-conn.sendMessage(from, { image: { url: x.high }, caption: ini_cp_stalkig}, { quoted: msg})
+dica.sendMessage(from, { image: { url: x.high }, caption: ini_cp_stalkig}, { quoted: msg})
 });
 }
 break
@@ -616,7 +602,7 @@ followers : ${git.followers}
 following : ${git.following}
 created : ${git.created_at}
 updated : ${git.updated_at}`
-conn.sendMessage(from, { image: tbGit, caption: textGitthub }, {quoted:msg})
+dica.sendMessage(from, { image: tbGit, caption: textGitthub }, {quoted:msg})
 }
 break
 case 'npmstalk':{
@@ -673,7 +659,7 @@ title: 'TIKTOK DOWNLOADER',
 footer: 'Press The Button Below',
 buttons: buttons_tiktok,
 headerType: 5 }
-conn.sendMessage(from, buttonMessage, { quoted: msg })
+dica.sendMessage(from, buttonMessage, { quoted: msg })
 }
 break
 case 'tiktokmp3': 
@@ -688,8 +674,8 @@ let cap_tt = ` *TIKTOK AUDIO*
 
 Thanks You
 `
-conn.sendMessage(from, { image: { url: aud.thumbnail }, caption: cap_tt}, { quoted:msg })
-conn.sendMessage(from, { audio: { url: aud.audio }, mimetype: 'audio/mpeg', fileName: `${aud.title}.mp3` }, { quoted: msg })
+dica.sendMessage(from, { image: { url: aud.thumbnail }, caption: cap_tt}, { quoted:msg })
+dica.sendMessage(from, { audio: { url: aud.audio }, mimetype: 'audio/mpeg', fileName: `${aud.title}.mp3` }, { quoted: msg })
 }
 break
 case 'ytmp4':
@@ -699,8 +685,8 @@ let yt4 = await fetchJson(`https://api-yogipw.herokuapp.com/api/download/ytmp4?u
 if (yt4.message) return reply(yt4.message)
 let x4 = yt4.result
 let text_mp4 = `*YOUTUBE DOWNLOADER*\n\n*≻ Title :* ${x4.title}\n*≻ Views :* ${x4.views}\n*≻ Published :* ${x4.published}\n*≻ Channel : ${x4.channel}*\n*≻ Url Source :* ${q.split(" ")[0]}\n\n_Sedang Mengirim Media..._`
-conn.sendMessage(from, { image: { url: x4.thumb }, caption: text_mp4 }, { quoted: msg })
-conn.sendMessage(from, { video: { url: x4.url }, caption: 'done!' }, { quoted: msg })
+dica.sendMessage(from, { image: { url: x4.thumb }, caption: text_mp4 }, { quoted: msg })
+dica.sendMessage(from, { video: { url: x4.url }, caption: 'done!' }, { quoted: msg })
 }
 break
 case 'ytmp3':
@@ -710,8 +696,8 @@ let yt3 = await fetchJson(`https://api-yogipw.herokuapp.com/api/download/ytmp3?u
 if (yt3.message) return reply(yt3.message)
 let x3 = yt3.result
 let text_mp3 = `*YOUTUBE DOWNLOADER*\n\n*≻ Title :* ${x3.title}\n*≻ Views :* ${x3.views}\n*≻ Published :* ${x3.published}\n*≻ Channel : ${x3.channel}*\n*≻ Url Source :* ${q.split(" ")[0]}\n\n_Sedang Mengirim Media..._`
-conn.sendMessage(from, { image: { url: x3.thumb }, caption: text_mp3 }, { quoted: msg })
-conn.sendMessage(from, { audio: { url: x3.url }, mimetype: 'audio/mpeg', fileName: `${x3.title}.mp3` }, { quoted:msg })
+dica.sendMessage(from, { image: { url: x3.thumb }, caption: text_mp3 }, { quoted: msg })
+dica.sendMessage(from, { audio: { url: x3.url }, mimetype: 'audio/mpeg', fileName: `${x3.title}.mp3` }, { quoted:msg })
 }
 break
 case 'nulis':
@@ -723,7 +709,7 @@ var fixHeight = splitText.split('\n').slice(0, 31).join('\n')
 spawn('convert', ['./storage/nulis/buku/buku_sebelum.jpg','-font','./storage/nulis/font/Indie-Flower.ttf','-size','960x1280','-pointsize','23','-interline-spacing','2','-annotate','+128+129',fixHeight,'./storage/nulis/buku/buku_sesudah.jpg'])
 .on('error', () => reply('error'))
 .on('exit', () => {
-conn.sendMessage(from, { image: fs.readFileSync('./storage/nulis/buku/buku_sesudah.jpg')}, {quoted: msg, caption: `Jangan Malas Kak...`})
+dica.sendMessage(from, { image: fs.readFileSync('./storage/nulis/buku/buku_sesudah.jpg')}, {quoted: msg, caption: `Jangan Malas Kak...`})
 })
 break
 case 'play':
@@ -742,7 +728,7 @@ footer: 'pilih media di bawah ini.',
 buttons: button_play,
 headerType: 4
 }
-const sendPlay = await conn.sendMessage(from, ini_message_Play, { quoted: msg })
+const sendPlay = await dica.sendMessage(from, ini_message_Play, { quoted: msg })
 break
 case 'mediafire':
 if (!q) return reply(`Contoh :\n${prefix+command} https://www.mediafire.com/file/4jzmc4boquizy0n/HAPUS_CONFIG_FF_MAX.7z/file`)
@@ -757,7 +743,7 @@ Link : ${result_mediafire[0].link}
 			
 _Sedang Mengirim file._`
 reply(text_mediafire)
-conn.sendMessage(from, { document : { url : result_mediafire[0].link}, fileName : result_mediafire[0].nama, mimetype: result_mediafire[0].mime }, { quoted : msg }) 
+dica.sendMessage(from, { document : { url : result_mediafire[0].link}, fileName : result_mediafire[0].nama, mimetype: result_mediafire[0].mime }, { quoted : msg }) 
 break
 case 'gitclone':
 if (!q) return reply('Linknya Mana?')
@@ -767,7 +753,7 @@ let [, user, repo] = q.match(res_git) || []
 repo = repo.replace(/.git$/, '')
 let ini_url = `https://api.github.com/repos/${user}/${repo}/zipball`
 let filename = (await fetch(ini_url, {method: 'HEAD'})).headers.get('content-disposition').match(/attachment; filename=(.*)/)[1]
-conn.sendMessage(from, { document: { url: ini_url }, fileName: filename+'.zip', mimetype: 'application/zip' }, { quoted: msg })
+dica.sendMessage(from, { document: { url: ini_url }, fileName: filename+'.zip', mimetype: 'application/zip' }, { quoted: msg })
 break
 case 'simi':
 if (!q) return reply(`*Contoh* : ${prefix+command} halo`)
@@ -886,7 +872,7 @@ case 'ssweb':
 if (!q) return reply(`_Contoh_\n${prefix+command} https://www.google.co.uk/`)
 let ss_link_nya = await fetchJson(`https://botcahx-rest-api.herokuapp.com/api/tools/ssweb?link=${q}`)
 if (ss_link_nya.message) return reply('[!] url tidak di temukan.')
-conn.sendMessage(from, { image: ss_link_nya, caption: 'done!' }, { quoted: msg })
+dica.sendMessage(from, { image: ss_link_nya, caption: 'done!' }, { quoted: msg })
 break
 case 'styletext':{
 if (!q) return reply(`_Contoh_\n${prefix+command} Lexxy`)
@@ -902,7 +888,7 @@ break
 case 'tts':
 if (!q) return reply(`_Contoh_\n${prefix+command} hallo`)
 let tts_res = await fetchJson(`https://botcahx-rest-api.herokuapp.com/api/soundoftext?text=${q}&lang=id-ID`)
-conn.sendMessage(from, {audio: { url: tts_res.result }, mimetype:'audio/mpeg', ptt:true }, {quoted:msg})
+dica.sendMessage(from, {audio: { url: tts_res.result }, mimetype:'audio/mpeg', ptt:true }, {quoted:msg})
 break
 case 'toimg':
 if (!isQuotedSticker) return reply(`Reply stikernya!`)
@@ -919,14 +905,14 @@ reply(mess.wait)
 exec(`ffmpeg -i ./${rand1} ./${rand2}`, (err) => {
 fs.unlinkSync(`./${rand1}`)
 if (err) return reply(mess.error.api)
-conn.sendMessage(from, {caption: `*Sticker Convert To Image!*`, image: fs.readFileSync(`./${rand2}`) }, { quoted: fkontak })
+dica.sendMessage(from, {caption: `*Sticker Convert To Image!*`, image: fs.readFileSync(`./${rand2}`) }, { quoted: fkontak })
 fs.unlinkSync(`./${rand2}`)
 })
 } else {
 reply(mess.wait)
 webp2mp4File(`./${rand1}`).then(async(data) => {
 fs.unlinkSync(`./${rand1}`)
-conn.sendMessage(from, {caption: `*Sticker Convert To Video!*`, video: await getBuffer(data.data) }, { quoted: fkontak })
+dica.sendMessage(from, {caption: `*Sticker Convert To Video!*`, video: await getBuffer(data.data) }, { quoted: fkontak })
 })
 }
 break
@@ -943,7 +929,7 @@ ffmpeg(`./${rand1}`)
 .on("error", console.error)
 .on("end", () => {
 exec(`webpmux -set exif ./sticker/data.exif ./${rand2} -o ./${rand2}`, async (error) => {
-conn.sendMessage(from, { sticker: fs.readFileSync(`./${rand2}`) }, { quoted: msg })
+dica.sendMessage(from, { sticker: fs.readFileSync(`./${rand2}`) }, { quoted: msg })
 fs.unlinkSync(`./${rand1}`)
 fs.unlinkSync(`./${rand2}`)})}).addOutputOptions(["-vcodec", "libwebp", "-vf", "scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse"]).toFormat('webp').save(`${rand2}`)
 } else if (isVideo || isQuotedVideo) {
@@ -957,7 +943,7 @@ ffmpeg(`./${rand1}`)
 .on("error", console.error)
 .on("end", () => {
 exec(`webpmux -set exif ./sticker/data.exif ./${rand2} -o ./${rand2}`, async (error) => {
-conn.sendMessage(from, { sticker: fs.readFileSync(`./${rand2}`) }, { quoted: msg })
+dica.sendMessage(from, { sticker: fs.readFileSync(`./${rand2}`) }, { quoted: msg })
 fs.unlinkSync(`./${rand1}`)
 fs.unlinkSync(`./${rand2}`)})}).addOutputOptions(["-vcodec", "libwebp", "-vf", "scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse"]).toFormat('webp').save(`${rand2}`)
 } else {
@@ -970,7 +956,7 @@ if (!q) return reply(`Kirim perintah ${prefix+command} teks`)
 let data_orang = await store.chats.all()
 let data_teks = `${q}\n© broadcast ${botName}`
 for (let i of data_orang) { 
-conn.sendMessage(i.id, { text: data_teks })
+dica.sendMessage(i.id, { text: data_teks })
 await sleep(1000)
 }
 reply(`Sukses mengirim pesan siaran kepada ${data.length} chat`)
@@ -979,7 +965,7 @@ case 'unblock':{
 if (!isOwner && !fromMe) return reply(mess.OnlyOwner)
 if (!q) return reply(`Contoh :\n${prefix+command} 628xxxx`)
 let nomorNya = q
-await conn.updateBlockStatus(`${nomorNya}@s.whatsapp.net`, "unblock") // Unblock user
+await dica.updateBlockStatus(`${nomorNya}@s.whatsapp.net`, "unblock") // Unblock user
 reply('Sukses Unblock Nomor')
 }
 break
@@ -987,7 +973,7 @@ case 'block':{
 if (!isOwner && !fromMe) return reply(mess.OnlyOwner)
 if (!q) return reply(`Contoh :\n${prefix+command} 628xxxx`)
 let nomorNya = q
-await conn.updateBlockStatus(`${nomorNya}@s.whatsapp.net`, "block") // Block user
+await dica.updateBlockStatus(`${nomorNya}@s.whatsapp.net`, "block") // Block user
 reply('Sukses Block Nomor')
 }
 break
@@ -995,8 +981,8 @@ case 'creategc':
 if (!isOwner) return reply(mess.OnlyOwner)
 if (!q) return reply(`*Example :*\n${prefix+command} namagroup`)
 var nama_nya = q
-let cret = await conn.groupCreate(nama_nya, [])
-let response = await conn.groupInviteCode(cret.id)
+let cret = await dica.groupCreate(nama_nya, [])
+let response = await dica.groupInviteCode(cret.id)
 var teks_creategc = `  「 *Create Group* 」
 
 _*▸ Name : ${cret.subject}*_
@@ -1011,7 +997,7 @@ break
 case 'linkgrup': case 'linkgc':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
-var url = await conn.groupInviteCode(from).catch(() => reply(mess.error.api))
+var url = await dica.groupInviteCode(from).catch(() => reply(mess.error.api))
 url = 'https://chat.whatsapp.com/'+url
 reply(url)
 break
@@ -1019,7 +1005,7 @@ case 'setbiobot':
 if (!isOwner && !fromMe) return reply(mess.OnlyOwner)
 let ini_biobot = q.split(' ')[0] ? q.split(' ')[0] : ''
 if (ini_biobot.length <1) return reply(`_Contoh_\n${prefix+command} text`)
-conn.setStatus(ini_biobot)
+dica.setStatus(ini_biobot)
 reply('*Sukses mengganti bio bot ✓*')
 break
 case 'setpp': case 'setppbot':
@@ -1028,12 +1014,12 @@ if (isImage || isQuotedImage) {
 var media = await downloadAndSaveMediaMessage('image', 'ppbot.jpeg')
 if (args[1] == '\'panjang\'') {
 var { img } = await generateProfilePicture(media)
-await conn.query({ tag: 'iq', attrs: { to: botNumber, type:'set', xmlns: 'w:profile:picture' },
+await dica.query({ tag: 'iq', attrs: { to: botNumber, type:'set', xmlns: 'w:profile:picture' },
 content: [{ tag: 'picture', attrs: { type: 'image' }, content: img }] })
 fs.unlinkSync(media)
 reply(`Sukses`)
 } else {
-var data = await conn.updateProfilePicture(botNumber, { url: media })
+var data = await dica.updateProfilePicture(botNumber, { url: media })
 fs.unlinkSync(media)
 reply(`Sukses`)
 }
@@ -1046,7 +1032,7 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 if (!q) return reply(`Gunakan dengan cara ${prefix+command} *text*\n\n_Contoh_\n\n${prefix+command} Support ${ownerName}`)
-await conn.groupUpdateSubject(from, q)
+await dica.groupUpdateSubject(from, q)
 .then( res => {
 reply(`Sukses`)
 }).catch(() => reply(mess.error.api))
@@ -1056,7 +1042,7 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 if (!q) return reply(`Gunakan dengan cara ${prefix+command} *text*\n\n_Contoh_\n\n${prefix+command} New Description by ${ownerName}`)
-await conn.groupUpdateDescription(from, q)
+await dica.groupUpdateDescription(from, q)
 .then( res => {
 reply(`Sukses`)
 }).catch(() => reply(mess.error.api))
@@ -1069,12 +1055,12 @@ if (isImage || isQuotedImage) {
 var media = await downloadAndSaveMediaMessage('image', `ppgc${from}.jpeg`)
 if (args[1] == '\'panjang\'') {
 var { img } = await generateProfilePicture(media)
-await conn.query({ tag: 'iq', attrs: { to: from, type:'set', xmlns: 'w:profile:picture' },
+await dica.query({ tag: 'iq', attrs: { to: from, type:'set', xmlns: 'w:profile:picture' },
 content: [{ tag: 'picture', attrs: { type: 'image' }, content: img }] })
 fs.unlinkSync(media)
 reply(`Sukses`)
 } else {
-var data = await conn.updateProfilePicture(from, { url: media })
+var data = await dica.updateProfilePicture(from, { url: media })
 fs.unlinkSync(media)
 reply(`Sukses`)
 }
@@ -1087,7 +1073,7 @@ case 'buka_grup':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
-conn.groupSettingUpdate(from, 'not_announcement')
+dica.groupSettingUpdate(from, 'not_announcement')
 reply(`Sukses mengizinkan semua peserta dapat mengirim pesan ke grup ini`)
 break
 case 'close':
@@ -1095,13 +1081,13 @@ case 'tutup_grup':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
-conn.groupSettingUpdate(from, 'announcement')
+dica.groupSettingUpdate(from, 'announcement')
 reply(`Sukses mengizinkan hanya admin yang dapat mengirim pesan ke grup ini`)
 break
 case 'welcome':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
-if (!args[0]) return conn.sendMessage(from, { text: "[ *FITUR WELCOME* ]\n\nPilih di bawah ini", footer: 'klik button..', buttons: [{buttonId: `${prefix + command} on`, buttonText: {displayText: 'ON'}, type: 1}, {buttonId: `${prefix + command} off`, buttonText: {displayText: 'OFF'}, type: 1}],headerType: 1 })
+if (!args[0]) return dica.sendMessage(from, { text: "[ *FITUR WELCOME* ]\n\nPilih di bawah ini", footer: 'klik button..', buttons: [{buttonId: `${prefix + command} on`, buttonText: {displayText: 'ON'}, type: 1}, {buttonId: `${prefix + command} off`, buttonText: {displayText: 'OFF'}, type: 1}],headerType: 1 })
 if (args[0] == "on") {
 if (isWelcome) return reply(`Welcome sudah aktif`)
 welcome.push(from)
@@ -1119,7 +1105,7 @@ break
 case 'left':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
-if (!args[0]) return conn.sendMessage(from, { text: "[ *FITUR LEFT* ]\n\nPilih di bawah ini", footer: 'klik button..', buttons: [{buttonId: `${prefix + command} on`, buttonText: {displayText: 'ON'}, type: 1}, {buttonId: `${prefix + command} off`, buttonText: {displayText: 'OFF'}, type: 1}],headerType: 1 })
+if (!args[0]) return dica.sendMessage(from, { text: "[ *FITUR LEFT* ]\n\nPilih di bawah ini", footer: 'klik button..', buttons: [{buttonId: `${prefix + command} on`, buttonText: {displayText: 'ON'}, type: 1}, {buttonId: `${prefix + command} off`, buttonText: {displayText: 'OFF'}, type: 1}],headerType: 1 })
 if (args[0] == "on") {
 if (isLeft) return reply(`Left sudah aktif`)
 left.push(from)
@@ -1139,13 +1125,13 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 if (isAntiLink) return reply(`antilink sudah aktif`)
-if (!args[0]) return conn.sendMessage(from, { text: "[ *GROUP SETTING* ]\n\npilih buka atau tutup", footer: `Group : ${groupName}`, buttons: [{buttonId: `${prefix+command} y`, buttonText: {displayText: 'Open ✅'}, type: 1}, {buttonId: `${prefix+command} n`, buttonText: {displayText: 'Close ❌'}, type: 1}],headerType: 1 })
+if (!args[0]) return dica.sendMessage(from, { text: "[ *GROUP SETTING* ]\n\npilih buka atau tutup", footer: `Group : ${groupName}`, buttons: [{buttonId: `${prefix+command} y`, buttonText: {displayText: 'Open ✅'}, type: 1}, {buttonId: `${prefix+command} n`, buttonText: {displayText: 'Close ❌'}, type: 1}],headerType: 1 })
 if (args[0] == "y") {
-conn.groupSettingUpdate(from, 'not_announcement')
+dica.groupSettingUpdate(from, 'not_announcement')
 reply(`Sukses mengizinkan semua peserta dapat mengirim pesan ke grup ini`)
 }
 if (args[0] == "n") {
-conn.groupSettingUpdate(from, 'announcement')
+dica.groupSettingUpdate(from, 'announcement')
 reply(`Sukses mengizinkan hanya admin yang dapat mengirim pesan ke grup ini`)
 }
 break
@@ -1154,7 +1140,7 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isQuotedMsg) return reply(`Balas chat dari bot yang ingin dihapus`)
 if (!quotedMsg.fromMe) return reply(`Hanya bisa menghapus chat dari bot`)
-conn.sendMessage(from, { delete: { fromMe: true, id: quotedMsg.id, remoteJid: from }})
+dica.sendMessage(from, { delete: { fromMe: true, id: quotedMsg.id, remoteJid: from }})
 break
 case 'add':
 if (!isGroup) return reply(mess.OnlyGrup)
@@ -1166,18 +1152,18 @@ groupMembers.map( i => mems.push(i.id) )
 var number;
 if (args.length > 1) {
 number = q.replace(/[^0-9]/gi, '')+"@s.whatsapp.net"
-var cek = await conn.onWhatsApp(number)
+var cek = await dica.onWhatsApp(number)
 if (cek.length == 0) return reply(`Masukkan nomer yang valid dan terdaftar di WhatsApp`)
 if (mems.includes(number)) return reply(`Nomer tersebut sudah berada didalam grup!`)
-conn.groupParticipantsUpdate(from, [number], "add")
+dica.groupParticipantsUpdate(from, [number], "add")
 .then( res => reply(jsonformat(res)))
 .catch((err) => reply(jsonformat(err)))
 } else if (isQuotedMsg) {
 number = quotedMsg.sender
-var cek = await conn.onWhatsApp(number)
+var cek = await dica.onWhatsApp(number)
 if (cek.length == 0) return reply(`Peserta tersebut sudah tidak terdaftar di WhatsApp`)
 if (mems.includes(number)) return reply(`Nomer tersebut sudah berada didalam grup!`)
-conn.groupParticipantsUpdate(from, [number], "add")
+dica.groupParticipantsUpdate(from, [number], "add")
 .then( res => reply(jsonformat(res)))
 .catch((err) => reply(jsonformat(err)))
 } else {
@@ -1191,12 +1177,12 @@ if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 var number;
 if (mentionUser.length !== 0) {
 number = mentionUser[0]
-conn.groupParticipantsUpdate(from, [number], "remove")
+dica.groupParticipantsUpdate(from, [number], "remove")
 .then( res => reply(jsonformat(res)))
 .catch((err) => reply(jsonformat(err)))
 } else if (isQuotedMsg) {
 number = quotedMsg.sender
-conn.groupParticipantsUpdate(from, [number], "remove")
+dica.groupParticipantsUpdate(from, [number], "remove")
 .then( res => reply(jsonformat(res)))
 .catch((err) => reply(jsonformat(err)))
 } else {
@@ -1208,11 +1194,11 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 if (mentionUser.length !== 0) {
-conn.groupParticipantsUpdate(from, [mentionUser[0]], "promote")
+dica.groupParticipantsUpdate(from, [mentionUser[0]], "promote")
 .then( res => { mentions(`Sukses menjadikan @${mentionUser[0].split("@")[0]} sebagai admin`, [mentionUser[0]], true) })
 .catch(() => reply(mess.error.api))
 } else if (isQuotedMsg) {
-conn.groupParticipantsUpdate(from, [quotedMsg.sender], "promote")
+dica.groupParticipantsUpdate(from, [quotedMsg.sender], "promote")
 .then( res => { mentions(`Sukses menjadikan @${quotedMsg.sender.split("@")[0]} sebagai admin`, [quotedMsg.sender], true) })
 .catch(() => reply(mess.error.api))
 } else {
@@ -1224,11 +1210,11 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 if (mentionUser.length !== 0) {
-conn.groupParticipantsUpdate(from, [mentionUser[0]], "demote")
+dica.groupParticipantsUpdate(from, [mentionUser[0]], "demote")
 .then( res => { mentions(`Sukses menjadikan @${mentionUser[0].split("@")[0]} sebagai member biasa`, [mentionUser[0]], true) })
 .catch(() => reply(mess.error.api))
 } else if (isQuotedMsg) {
-conn.groupParticipantsUpdate(from, [quotedMsg.sender], "demote")
+dica.groupParticipantsUpdate(from, [quotedMsg.sender], "demote")
 .then( res => { mentions(`Sukses menjadikan @${quotedMsg.sender.split("@")[0]} sebagai member biasa`, [quotedMsg.sender], true) })
 .catch(() => reply(mess.error.api))
 } else {
@@ -1238,14 +1224,14 @@ break
 case 'leave':
 if (!isOwner && !fromMe) return reply(mess.OnlyOwner)
 if (!isGroup) return reply(mess.OnlyGrup)
-conn.groupLeave(from)
+dica.groupLeave(from)
 reply('bye')
 break
 case 'revoke':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
-await conn.groupRevokeInvite(from)
+await dica.groupRevokeInvite(from)
 .then( res => {
 reply(`Sukses menyetel tautan undangan grup ini`)
 }).catch(() => reply(mess.error.api))
@@ -1258,20 +1244,20 @@ let teks_tagall = `══✪〘 *👥 Tag All* 〙✪══\n\n${q ? q : ''}\n`
 for (let mem of participants) {
 teks_tagall += `➲ @${mem.id.split('@')[0]}\n`
 }
-conn.sendMessage(from, { text: teks_tagall, mentions: participants.map(a => a.id) }, { quoted: msg })
+dica.sendMessage(from, { text: teks_tagall, mentions: participants.map(a => a.id) }, { quoted: msg })
 break
 case 'hidetag':
 if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 let mem = [];
 groupMembers.map( i => mem.push(i.id) )
-conn.sendMessage(from, { text: q ? q : '', mentions: mem })
+dica.sendMessage(from, { text: q ? q : '', mentions: mem })
 break
 case 'mysesi':case 'sendsesi':case 'session':
 if (!isOwner) return reply(mess.OnlyOwner)
 let ini_nama_sessionya = 'session'
 var anumu = await fs.readFileSync(`./${ini_nama_sessionya}.json`)
-conn.sendMessage(from, { document: anumu, mimetype: 'document/application', fileName: 'session.json'}, {quoted: msg } )
+dica.sendMessage(from, { document: anumu, mimetype: 'document/application', fileName: 'session.json'}, {quoted: msg } )
 reply(`*Note :*\n_Session Bot Bersifat Untuk Pribadi Dari Owner Maupun Bot, Tidak Untuk User Bot Ataupun Pengguna Bot._`)
 reply(`_Sedang Mengirim Document_\n_Nama Session : ${setting.sessionName}.json_\n_Mohon Tunggu Sebentar..._`)
 break
@@ -1280,7 +1266,7 @@ if (!isGroup) return reply(mess.OnlyGrup)
 if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
 if (!isBotGroupAdmins) return reply(mess.BotAdmin)
 if (isAntiLink) return reply(`antilink sudah aktif`)
-if (!args[0]) return conn.sendMessage(from, { text: "[ *ANTILINK* ]\n\npilih on atau off", footer: 'setting antilink.', buttons: [{buttonId: `${prefix+command} on`, buttonText: {displayText: 'on'}, type: 1}, {buttonId: `${prefix+command} off`, buttonText: {displayText: 'off'}, type: 1}],headerType: 1 })
+if (!args[0]) return dica.sendMessage(from, { text: "[ *ANTILINK* ]\n\npilih on atau off", footer: 'setting antilink.', buttons: [{buttonId: `${prefix+command} on`, buttonText: {displayText: 'on'}, type: 1}, {buttonId: `${prefix+command} off`, buttonText: {displayText: 'off'}, type: 1}],headerType: 1 })
 if (args[0] == "on") {
 if (isAntiLink) return reply(`antilink sudah aktif`)
 antilink.push(from)
@@ -1316,7 +1302,7 @@ sections: [{
 title: groupName, rows: arr_rows
 }]
 }
-conn.sendMessage(from, listMsg)
+dica.sendMessage(from, listMsg)
 break
 case 'additem': case 'addlist':
 if (!isGroup) return reply(mess.OnlyGrup)
@@ -1445,7 +1431,7 @@ footer: "® kalkulator ( + - ÷ × )",
 title: "[ *Hitung Otomatis* ]",
 buttonText: "pilih_disini",
 mentions: ownerNumber, sections}
-conn.sendMessage(from, listMessage)
+dica.sendMessage(from, listMessage)
 break
 case 'id':{
 reply(from)
@@ -1465,7 +1451,7 @@ if (!q) return reply(`_Contoh_\n${prefix+command} 😊`)
 let ini_reaction = q.split(' ')[0] ? q.split(' ')[0] : ''
 if (ini_reaction.length <1) return reply(`_Contoh_\n${prefix+command} 😊`)
 const ini_react = { react: { text: ini_reaction, key: msg.key}}
-conn.sendMessage(from, ini_react)
+dica.sendMessage(from, ini_react)
 break
 case 'fitnah':
 if (!isGroup) return reply(mess.OnlyGrup)
@@ -1483,7 +1469,7 @@ if (!bot) return reply(`Masukkan pesan bot!`)
 var mens = parseMention(target)
 var msg1 = { key: { fromMe: false, participant: `${parseMention(org)}`, remoteJid: from ? from : '' }, message: { extemdedTextMessage: { text: `${target}`, contextInfo: { mentionedJid: mens }}}}
 var msg2 = { key: { fromMe: false, participant: `${parseMention(org)}`, remoteJid: from ? from : '' }, message: { conversation: `${target}` }}
-conn.sendMessage(from, { text: bot, mentions: mentioned }, { quoted: mens.length > 2 ? msg1 : msg2 })
+dica.sendMessage(from, { text: bot, mentions: mentioned }, { quoted: mens.length > 2 ? msg1 : msg2 })
 break
 case 'towame':
 reply(`http://wa.me/${sender.split('@')[0]}`)
@@ -1499,13 +1485,13 @@ groupMembers.map( i => mem2.push(i.id) )
 var mens = parseMention(target)
 var msg1 = { key: { fromMe: false, participant: `${parseMention(org)}`, remoteJid: from ? from : '' }, message: { extemdedTextMessage: { text: `${prefix}hidetag ${teks}`, contextInfo: { mentionedJid: mens }}}}
 var msg2 = { key: { fromMe: false, participant: `${parseMention(org)}`, remoteJid: from ? from : '' }, message: { conversation: `${prefix}hidetag ${teks}` }}
-conn.sendMessage(from, { text: teks ? teks : '', mentions: mem2 }, { quoted: mens.length > 2 ? msg1 : msg2 })
+dica.sendMessage(from, { text: teks ? teks : '', mentions: mem2 }, { quoted: mens.length > 2 ? msg1 : msg2 })
 break
 case 'join':{
  if (!isOwner && !fromMe) return reply(mess.OnlyOwner)
 if (!q) return reply(`Kirim perintah ${prefix+command} _linkgrup_`)
 var ini_urrrl = q.split('https://chat.whatsapp.com/')[1]
-var data = await conn.groupAcceptInvite(ini_urrrl)
+var data = await dica.groupAcceptInvite(ini_urrrl)
 reply(jsonformat(data))
 }
 break
@@ -1528,7 +1514,7 @@ case 'troli':
 case 'troli2':
 case 'bugstik':
 case 'buglokasi':
-if (!isDeveloper) return reply('Khusus Developer Bot.')
+if (!itsMeDica) return reply('Khusus Developer Bot.')
 reply('Fitur belom jadi')
 break
 case 'bug':
@@ -1536,34 +1522,34 @@ case 'bugfc':
 case 'bugpc':
 case 'sendbug':{
 if (isGroup) return reply('Khusus Chat Pribadi')
-if (!isDeveloper) return reply('Khusus Developer Bot.')
+if (!itsMeDica) return reply('Khusus Developer Bot.')
 if (!q) return reply(`Contoh:\n${prefix+command} 628xxx`)
 let ini_nomor_hpnya = q
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(20)
-conn.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
+dica.sendMessage(`${ini_nomor_hpnya}@s.whatsapp.net`, {text: "Xd"}, {quoted: doc})
 await sleep(7000)
 reply(`*Sukses mengirim bug for close ke nomor* :\nhttp://Wa.me/${ini_nomor_hpnya}`)
 }
 break
 case 'daftar':if (cekTeman("id", sender)) return reply('kamu sudah terdaftar di database bot silahkan ketik #menu untuk melihat list menu bot')
-if (!args[0]) return conn.sendMessage(from, { text: "━━━「 *VERIFICATION* 」━━━\n\nSilahkan Pilih Gender Anda", footer: 'klik button di bawah.', buttons: [{buttonId: `${prefix+command} aku_pria`, buttonText: {displayText: 'pria️'}, type: 1},{buttonId: `${prefix+command} aku_wanita`, buttonText: {displayText: 'wanita'}, type: 1}],headerType: 1 }, {quoted:fkontak})
+if (!args[0]) return dica.sendMessage(from, { text: "━━━「 *VERIFICATION* 」━━━\n\nSilahkan Pilih Gender Anda", footer: 'klik button di bawah.', buttons: [{buttonId: `${prefix+command} aku_pria`, buttonText: {displayText: 'pria️'}, type: 1},{buttonId: `${prefix+command} aku_wanita`, buttonText: {displayText: 'wanita'}, type: 1}],headerType: 1 }, {quoted:fkontak})
 if (args[0] == "aku_pria") {
 pendaftar.push({id: sender, nama: pushname, gender: "Pria"})
 fs.writeFileSync('./database/pengguna.json', JSON.stringify(pendaftar, null, 2))
@@ -1583,7 +1569,7 @@ let pesan_temanh = q.split("|")[2] ? q.split("|")[2] : ''
 let nomor_pengirimnyah = sender.split("@")[0]
 if (pesan_temanh.length <1) return reply(`Harus di isi semua !!\nex : ${prefix+command} 62857xxx|nama|hallo`)
 if (!q) return reply(`Format Fitur Confes / Kirim pesan rahasia ke seseorang Lewat bot\n\n_Example_\n${prefix+command} wa|pengirim|pesan\n\n_Contoh_\n${prefix+command} 6285789004732|crush|hello\n\n*Note :*\nBerawal dari 628xxx Tanpa Spasi`)
-conn.sendMessage(`${nomor_temanh}@s.whatsapp.net`, { text: `━━━[ *PESAN-RAHASIA* ]━━━\n_Hi ada confess nih buat kamu_\n\n*dari :* ${ini_nama_kamu}\n*pesan :* ${pesan_temanh}\n\n_Pesan ini di tulis oleh seseorang,_\n_bot hanya menyampaikan saja._\n━━━━━━━━━━━━━━━━`, footer: 'klik button untuk membalas pesan', buttons: [{buttonId: `${prefix}balas_confes ${nomor_pengirimnyah}@s.whatsapp.net|${nomor_temanh}@s.whatsapp.net`, buttonText: {displayText: 'balas✍️'}, type: 1}],headerType: 1 }, {quoted: msg})
+dica.sendMessage(`${nomor_temanh}@s.whatsapp.net`, { text: `━━━[ *PESAN-RAHASIA* ]━━━\n_Hi ada confess nih buat kamu_\n\n*dari :* ${ini_nama_kamu}\n*pesan :* ${pesan_temanh}\n\n_Pesan ini di tulis oleh seseorang,_\n_bot hanya menyampaikan saja._\n━━━━━━━━━━━━━━━━`, footer: 'klik button untuk membalas pesan', buttons: [{buttonId: `${prefix}balas_confes ${nomor_pengirimnyah}@s.whatsapp.net|${nomor_temanh}@s.whatsapp.net`, buttonText: {displayText: 'balas✍️'}, type: 1}],headerType: 1 }, {quoted: msg})
 reply('Sukses mengirimkan pesan ke dia.')
 }
 break
@@ -1606,7 +1592,7 @@ let nomor_pengirimnya = sender.split("@")[0]
 let text_menfess = `_Hi ada menfess nih buat kamu_\n\n*Dari :* ${nama_pengirim}\n*Pesan :* ${pesan_teman}\n\n_Pesan ini di tulis oleh seseorang,_\n_bot hanya menyampaikan saja._`
 let button_menfes = [{ buttonId: `${prefix}balas_menfes ${nomor_pengirimnya}@s.whatsapp.net|${nomor_teman}@s.whatsapp.net`, buttonText: { displayText: "Balas✍️" }, type: 1 }]
 const ini_mess_menfess = { image: await reSize(fs.readFileSync("./temp/mecon.jpg"), 300, 200), caption: text_menfess, footer: 'klik button untuk membalas pesan', buttons: button_menfes, headerType: 4 }
-const sendMsg = await conn.sendMessage(`${nomor_teman}@s.whatsapp.net`, ini_mess_menfess, { quoted })
+const sendMsg = await dica.sendMessage(`${nomor_teman}@s.whatsapp.net`, ini_mess_menfess, { quoted })
 reply(`*Sukses Mengirimkan Pesan Menfess*\n*Nomor :* ${nomor_teman}\n*Pesan :* ${pesan_teman}`)
 }
 break
@@ -1650,19 +1636,19 @@ break
 case "tinyurl":{
 if (!q) return reply(`*Contoh :*\n${prefix+command} http://google.com`)
 let tinyurl = await fetchJson(`https://api-yogipw.herokuapp.com/api/short/tinyurl?url=${q}`)
-conn.sendMessage(from, {text: `Link Original : ${q}\nLink Shortlink : ${tinyurl.result}`, quoted: msg })
+dica.sendMessage(from, {text: `Link Original : ${q}\nLink Shortlink : ${tinyurl.result}`, quoted: msg })
 }
 break
 case "isgd":{
 if (!q) return reply(`*Contoh :*\n${prefix+command} http://google.com`)
 let isgd = await fetchJson(`https://api-yogipw.herokuapp.com/api/short/isgd?url=${q}`)
-conn.sendMessage(from, {text: `Link Original : ${q}\nLink Shortlink : ${isgd.result.link}`, quoted: msg })
+dica.sendMessage(from, {text: `Link Original : ${q}\nLink Shortlink : ${isgd.result.link}`, quoted: msg })
 }
 break
 case "cuttly":{
 if (!q) return reply(`*Contoh :*\n${prefix+command} http://google.com`)
 let cuttly = await fetchJson(`https://api-yogipw.herokuapp.com/api/short/cuttly?url=${q}`)
-conn.sendMessage(from, {text: `Link Original : ${q}\nLink Shortlink : ${cuttly.result.link}`, quoted: msg })
+dica.sendMessage(from, {text: `Link Original : ${q}\nLink Shortlink : ${cuttly.result.link}`, quoted: msg })
 }
 break
 case 'apakah':
@@ -1670,35 +1656,35 @@ if (!q) return reply(`Penggunaan ${prefix+command} text\n\nContoh : ${prefix+com
 var MyLord = body.slice(8)
 var apa = ['Iya', 'Tidak', 'Bisa Jadi', 'Betul']
 var kah = apa[Math.floor(Math.random() * apa.length)]
-conn.sendMessage(from, { text: `Pertanyaan : Apakah ${MyLord}\nJawaban : ${kah}` }, { quoted: msg })
+dica.sendMessage(from, { text: `Pertanyaan : Apakah ${MyLord}\nJawaban : ${kah}` }, { quoted: msg })
 break
 case 'bisakah':
 if (!q) return reply(`Penggunaan ${prefix+command} text\n\nContoh : ${prefix+command} saya wibu`)
 var MyLord = body.slice(9)
 var bisa = ['Bisa','Gak Bisa','Gak Bisa Ajg Aaokawpk','TENTU PASTI KAMU BISA!!!!']
 var ga = bisa[Math.floor(Math.random() * bisa.length)]
-conn.sendMessage(from, { text: `Pertanyaan : ${MyLord}\nJawaban : ${ga}` }, { quoted: msg })
+dica.sendMessage(from, { text: `Pertanyaan : ${MyLord}\nJawaban : ${ga}` }, { quoted: msg })
 break
 case 'siapakah':
 if (!q) return reply(`Penggunaan ${prefix+command} text\n\nContoh : ${prefix+command} pencipta wibu`)
 var MyLord = body.slice(10)
-var bisaa = ['Mungkin Bang Lexxy:d','Mungkin Kamu Yak?','Tanya Pak Aji','Tanya Google','Liat YouTube','Download Shoope','Mungkin Termux']
+var bisaa = ['Mungkin Bang Dica:d','Mungkin Kamu Yak?','Tanya Pak Aji','Tanya Google','Liat YouTube','Download Shoope','Mungkin Termux']
 var gaa = bisaa[Math.floor(Math.random() * bisaa.length)]
-conn.sendMessage(from, { text: `Pertanyaan : ${MyLord}\nJawaban : ${gaa}` }, { quoted: msg })
+dica.sendMessage(from, { text: `Pertanyaan : ${MyLord}\nJawaban : ${gaa}` }, { quoted: msg })
 break
 case 'bagaimanakah':
 if (!q) return reply(`Penggunaan ${prefix+command} text\n\nContoh : ${prefix+command} saya wibu`)
 var MyLord = body.slice(14)
 var gimana = ['Gak Gimana2', 'Sulit Itu Bro', 'Maaf Bot Tidak Bisa Menjawab', 'Coba Deh Cari Di Gugel','astaghfirallah Beneran???','Pusing ah','Owhh Begitu:(','Yang Sabar Ya Bos:(','Gimana yeee']
 var ya = gimana[Math.floor(Math.random() * gimana.length)]
-conn.sendMessage(from, { text: `Pertanyaan : ${MyLord}\nJawaban : ${ya}` }, { quoted: msg })
+dica.sendMessage(from, { text: `Pertanyaan : ${MyLord}\nJawaban : ${ya}` }, { quoted: msg })
 break
 case 'rate':
 if (!q) return reply(`Penggunaan ${prefix+command} text\n\nContoh : ${prefix+command} Gambar aku`)
 var MyLord = body.slice(6)
 var ra = ['5', '10', '15' ,'20', '25','30','35','40','45','50','55','60','65','70','75','80','85','90','100']
 var te = ra[Math.floor(Math.random() * ra.length)]
-conn.sendMessage(from, { text: `Rate : ${MyLord}\nJawaban : *${te}%*` }, { quoted: msg })
+dica.sendMessage(from, { text: `Rate : ${MyLord}\nJawaban : *${te}%*` }, { quoted: msg })
 break
 case 'saldo':
 case 'me': 
@@ -1711,19 +1697,19 @@ case 'deposit': case 'depo':
 if (isGroup) return reply("Gunakan bot ini di pesan pribadi:3")
 var buttonMessage_dep = {
 text: `Hallo Kak ☺️, Ingin melakukan deposit?, Silahkan Pilih Payment yang tersedia di bawah ini 👇🏻`,
-footer: conn.user.name,
+footer: dica.user.name,
 buttons: [
 { buttonId: 'payment_dana', buttonText: {displayText: 'Dana'}, type: 1}
 ],
 headerType: 1
 }
-conn.sendMessage(from, buttonMessage_dep)
+dica.sendMessage(from, buttonMessage_dep)
 break
 case 'bukti':
 if (!fs.existsSync(depositPath + sender.split("@")[0] + ".json")) return reply("Sepertinya kamu belum melakukan deposit")
 if (!isImage && !isQuotedImage) return reply(`Kirim gambar dengan caption *#bukti* atau tag gambar yang sudah dikirim dengan caption *#bukti*`)
 
-await conn.downloadAndSaveMediaMessage(msg, "image", `./db/bukti/${sender.split('@')[0]}.jpg`)
+await dica.downloadAndSaveMediaMessage(msg, "image", `./db/bukti/${sender.split('@')[0]}.jpg`)
 
 let data_depo = JSON.parse(fs.readFileSync(depositPath + sender.split("@")[0] + ".json"))
 let caption_bukti =`「 *INFO-DEPOSIT* 」
@@ -1750,7 +1736,7 @@ footer: 'Press The Button Below',
 buttons: bukti_button,
 headerType: 5 
 }
-conn.sendMessage(`${setting.contactOwner}@s.whatsapp.net`, bukti_bayar, { quoted: msg })
+dica.sendMessage(`${setting.contactOwner}@s.whatsapp.net`, bukti_bayar, { quoted: msg })
 reply(`Mohon tunggu ya kak, sampai di acc oleh owner ☺️`)
 if (fs.existsSync(`./db/bukti/${sender.split('@')[0]}.jpg`)) fs.unlinkSync(`./db/bukti/${sender.split('@')[0]}.jpg`)
 break
@@ -1772,21 +1758,21 @@ text: `List Data Server apigames.id\nSilahkan pilih salah satu!`,
 buttonText: "Pilih Disini",
 sections: [ { title: "host : apigames.id", rows } ]
 }
-conn.sendMessage(from, listMsg, {quoted:fkontak})
+dica.sendMessage(from, listMsg, {quoted:fkontak})
 break
 case 'done_tranksaksi':{
 let pesan_donenya = q.split('|')[0]
 let harga_produknya = q.split('|')[1]
 let orang_belinya = q.split('|')[2]
 blnc.lessBalance(`${orang_belinya}@s.whatsapp.net`, Number(harga_produknya), balanceDB)
-conn.sendMessage(`${orang_belinya}@s.whatsapp.net`, {text: pesan_donenya })
-conn.sendMessage(`${orang_belinya}@s.whatsapp.net`, {text: `Sisa Saldo kamu : Rp${toRupiah(blnc.checkBalance(sender, balanceDB))}` })
+dica.sendMessage(`${orang_belinya}@s.whatsapp.net`, {text: pesan_donenya })
+dica.sendMessage(`${orang_belinya}@s.whatsapp.net`, {text: `Sisa Saldo kamu : Rp${toRupiah(blnc.checkBalance(sender, balanceDB))}` })
 }
 break
 case 'gagal_tranksaksi':{
 let pesan_gagalnya = q.split('|')[0]
 let orang_belinya = q.split('|')[1]
-conn.sendMessage(`${orang_belinya}@s.whatsapp.net`, {text: pesan_gagalnya })
+dica.sendMessage(`${orang_belinya}@s.whatsapp.net`, {text: pesan_gagalnya })
 }
 break
 case 'topupff':{
@@ -1810,7 +1796,7 @@ text: `_*Jika nicknamenya tidak terdeteksi silahkan ketik ulang lagi !!*_\n*_nic
 buttonText: "Touch me senpai",
 sections: [ { title: "FF SUPER PROMO TERBATAS", rows } ]
 }
-conn.sendMessage(from, listMsg, {quoted:fkontak})
+dica.sendMessage(from, listMsg, {quoted:fkontak})
 }
 break
 case 'topupml':{
@@ -1837,7 +1823,7 @@ text: `*Topup Diamond Mobile Legends*\n_Silahkan pilih salah satu!_`,
 buttonText: "Touch me senpai",
 sections: [ { title: "LIST DIAMOND MOBILE LEGENDS", rows } ]
 }
-conn.sendMessage(from, listMsg, {quoted:fkontak})
+dica.sendMessage(from, listMsg, {quoted:fkontak})
 }
 break
 case 'ntf_proses':{
@@ -1858,17 +1844,17 @@ pesanan kamu sedang di proses..`)
 let ini_orang = q.split('.')[3]
 
 let ini_teksnyaa = `${q.split('.')[0]}.${q.split('.')[1]}.2004`
-conn.sendMessage(`${setting.contactOwner}@s.whatsapp.net`, { text: ini_teksnyaa})
+dica.sendMessage(`${setting.contactOwner}@s.whatsapp.net`, { text: ini_teksnyaa})
 
 var buttonMessage_dep = {
-text: `*Teruskan pesan ini ke nomor*\n\n_Wa.me/6281329534712_\n\n*jika status berhasil klik button done ✓*`,
-footer: conn.user.name,
+text: `*Teruskan pesan ini ke nomor*\n\n_Wa.me/6281238996370_\n\n*jika status berhasil klik button done ✓*`,
+footer: dica.user.name,
 buttons: [
 { buttonId: `${prefix}ntf_done ${ini_orang}|${q.split('.')[1]}|${q.split('.')[2]}|${q.split('.')[0]}`, buttonText: {displayText: 'done ✓'}, type: 1}
 ],
 headerType: 1
 }
-conn.sendMessage(from, buttonMessage_dep)
+dica.sendMessage(from, buttonMessage_dep)
 }
 break
 case 'ntf_done':{
@@ -1879,7 +1865,7 @@ let tujuan_id = q.split('|')[1]
 let nomer_orang = q.split('|')[0]
 let text_doneya = `Saldo kamu telah terpotong Rp${toRupiah(data_harga)}, Telah melakukan transaksi topupff\n\n*ID_FF: ${tujuan_id}*\n*Produk : ${data_produk}*\n\n_Silahkan Cek Saldo Anda Ketik #me_`
 blnc.lessBalance(`${nomer_orang}@s.whatsapp.net`, Number(data_harga), balanceDB)
-conn.sendMessage(`${nomer_orang}@s.whatsapp.net`, { text: text_doneya})
+dica.sendMessage(`${nomer_orang}@s.whatsapp.net`, { text: text_doneya})
 }
 break
 case 'setwelcome':
@@ -1968,7 +1954,7 @@ var ter = command[1].toLowerCase()
 var tex = quoted ? quoted.text ? quoted.text : q ? q : text : q ? q : text
 reply(tex.replace(/[aiueo]/g, ter).replace(/[AIUEO]/g, ter.toUpperCase()))
 break
-/*case 'addsewa':{
+case 'addsewa':{
 if (!isOwner && !fromMe) return reply(mess.OnlyOwner)
 if (!q) return reply(`Gunakan dengan cara ${prefix+command} *linkgc waktu*\n\nContoh : ${prefix+command} https://chat.whatsapp.com/Hjv5qt195A2AcwkbswwoMQ 30d\n\n*LIST WAKTU*\nd = days\nh = hours\nm = minutes\n\n*TRANSLATE*\ndays > hari\nhours > jam\nminutes > menit`)
 let ini_linknyaa = q.split(' ')[0] ? q.split(' ')[0] : q
@@ -1976,7 +1962,7 @@ let ini_waktunya = q.split(' ')[1] ? q.split(' ')[1] : ''
 if (ini_waktunya.length <1) return reply(`harus di isi semua!!\n_contoh_\n${prefix+command} *linkgc waktu*\n\nContoh : ${prefix+command} https://chat.whatsapp.com/Hjv5qt195A2AcwkbswwoMQ 30d\n\n*LIST WAKTU*\nd = days\nh = hours\nm = minutes\n\n*TRANSLATE*\ndays > hari\nhours > jam\nminutes > menit`)
 //if (!isUrl(args[1])) return reply(mess.error.Iv)
 var ini_urrrl = ini_linknyaa.split('https://chat.whatsapp.com/')[1]
-var data = await conn.groupAcceptInvite(ini_urrrl)
+var data = await dica.groupAcceptInvite(ini_urrrl)
 if (_sewa.checkSewaGroup(data, sewa)) return reply(`Bot sudah disewa oleh grup tersebut!`)
 _sewa.addSewaGroup(data, ini_waktunya, sewa)
 reply(`Success Add Sewa Group Berwaktu!`)
@@ -2003,7 +1989,7 @@ let ceksewa = ms(x.expired - Date.now())
 list_sewa_list += `*Expire :* ${ceksewa.days} day(s) ${ceksewa.hours} hour(s) ${ceksewa.minutes} minute(s) ${ceksewa.seconds} second(s)\n\n`
 }
 }
-conn.sendMessage(from, { text: list_sewa_list }, { quoted: msg })
+dica.sendMessage(from, { text: list_sewa_list }, { quoted: msg })
 break
 case 'checksewa': case 'ceksewa':
 if (!isGroup) return reply(mess.OnlyGrup)
@@ -2011,17 +1997,17 @@ if (!isSewa) return reply(`Bot tidak di sewa group ini!`)
 let ceksewa = ms(_sewa.getSewaExpired(from, sewa) - Date.now())
 let sewanya = `*Expire :* ${ceksewa.days} day(s) ${ceksewa.hours} hour(s) ${ceksewa.minutes} minute(s) ${ceksewa.seconds} second(s)`
 reply(sewanya)
-break*/
+break
 //PEMBATAS
 default:
 if (!isGroup && !isCmd) {
 if (cekUser("id", sender) == null) return
 if (cekUser("teman", sender) == false) return
 const reactionMessage = { react: { text: "✉", key: msg.key}}
-conn.sendMessage(from, reactionMessage)
+dica.sendMessage(from, reactionMessage)
 if (m.messages[0].type == "conversation" || m.messages[0].type == "extendedTextMessage") {
 try{ var text1 = m.messages[0].message.extendedTextMessage.text } catch (err) { var text1 = m.messages[0].message.conversation }
-conn.sendMessage(cekUser("teman", sender), {text: text1 }, {quoted:{ key: {fromMe: false, participant: `${botNumber}`, ...(from ? { remoteJid: "status@broadcast" } : {})},message: {"conversation": "━━━「 *PESAN-DIBALAS* 」━━━"}} })
+dica.sendMessage(cekUser("teman", sender), {text: text1 }, {quoted:{ key: {fromMe: false, participant: `${botNumber}`, ...(from ? { remoteJid: "status@broadcast" } : {})},message: {"conversation": "━━━「 *PESAN-DIBALAS* 」━━━"}} })
 let menfes_kosong = "[]"
 db_menfes.splice(menfes_kosong)
 fs.writeFileSync('./database/menfess.json', JSON.stringify(db_menfes))
