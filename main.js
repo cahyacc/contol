@@ -132,10 +132,10 @@ const connectToWhatsApp = async () => {
 
         
     dica.ev.on('connection.update', (update) => {
-        const { connection, lastDisdicaect } = update
+        const { connection, lastDisconnect } = update
         if (connection === 'close') {
             status.stop()
-            redicaect.stop()
+            reconnect.stop()
             starting.stop()
             console.log(dicaLog('connect, Welcome Owner'))
             lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut 
