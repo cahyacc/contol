@@ -27,7 +27,7 @@ const { Spinner } = clui
 const afk = require("./lib/afk");
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif2')
 const { serialize, getBuffer, makeid } = require("./lib/myfunc");
-const { color, dicaLog } = require("./lib/color");
+const { color, connLog } = require("./lib/color");
 const { isSetWelcome, getTextSetWelcome } = require('./lib/setwelcome');
 const { isSetLeft, getTextSetLeft } = require('./lib/setleft');
 
@@ -137,10 +137,10 @@ const connectToWhatsApp = async () => {
             status.stop()
             reconnect.stop()
             starting.stop()
-            console.log(dicaLog('connect, Welcome Owner'))
+            console.log(connLog('connect, Welcome Owner'))
             lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut 
             ? connectToWhatsApp()
-            : console.log(dicaLog('connection Lost'))
+            : console.log(connLog('connection Lost'))
         }
     })
 	
